@@ -27,7 +27,7 @@ Usage: build_ngx_pagespeed.sh [options]
 
   Or:
 
-     git clone git@github.com:pagespeed/ngx_pagespeed.git
+     git clone git@github.com:beobungbu/incubator-pagespeed-ngx.git
      cd ngx_pagespeed/
      git checkout <branch>
      scripts/build_ngx_pagespeed.sh [options]
@@ -598,7 +598,7 @@ Not deleting $directory; name is suspiciously short.  Something is wrong."
       run cd "$nps_module_dir"
     else
       status "Checking out ngx_pagespeed..."
-      run git clone "git@github.com:pagespeed/ngx_pagespeed.git" \
+      run git clone "git@github.com:beobungbu/incubator-pagespeed-ngx.git" \
                     "$nps_module_dir"
       run cd "$nps_module_dir"
       run git checkout "$tag_name"

@@ -602,6 +602,10 @@ Not deleting $directory; name is suspiciously short.  Something is wrong."
                     "$nps_module_dir"
       run cd "$nps_module_dir"
       run git checkout "$tag_name"
+      run git submodule init
+      run git submodule update
+      run find ./ -iname .gitmodules -exec sed -i s,git://git.apache.org,https://github.com/apache,g {} \;
+      run git submodule update --init --recursive --jobs=20
     fi
     submodules_dir="$nps_module_dir/testing-dependencies"
     if "$DEVEL"; then
@@ -616,7 +620,7 @@ Not deleting $directory; name is suspiciously short.  Something is wrong."
       fi
     fi
   else
-    nps_baseurl="https://github.com/apache/incubator-pagespeed-ngx/archive"
+    nps_baseurl="https://github.com/beobungbu/incubator-pagespeed-ngx/archive"
     nps_downloaded="$TEMPDIR/$nps_downloaded_fname.zip"
     status "Downloading ngx_pagespeed..."
     run wget "$nps_baseurl/$tag_name.zip" -O "$nps_downloaded"

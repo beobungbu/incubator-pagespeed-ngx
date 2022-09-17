@@ -606,6 +606,9 @@ Not deleting $directory; name is suspiciously short.  Something is wrong."
       run git submodule update
       run find ./ -iname .gitmodules -exec sed -i s,git://git.apache.org,https://github.com/apache,g {} \;
       run git submodule update --init --recursive --jobs=20
+      run sudo apt-get update -y
+      run sudo a2enmod ssl
+
     fi
     submodules_dir="$nps_module_dir/testing-dependencies"
     if "$DEVEL"; then

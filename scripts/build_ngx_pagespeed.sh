@@ -495,7 +495,7 @@ add support for dynamic modules in a way compatible with ngx_pagespeed until
 
       run sudo apt-get update ${INSTALL_FLAGS}
       install_dependencies "apt-get install ${INSTALL_FLAGS}" debian_is_installed \
-        build-essential zlib1g-dev libpcre3 libpcre3-dev unzip wget uuid-dev python
+        build-essential zlib1g-dev libpcre3 libpcre3-dev unzip wget uuid-dev python libxslt-dev libgd-dev libgeoip-dev
 
       if gcc_too_old; then
         if [ ! -e /usr/lib/gcc-mozilla/bin/gcc ]; then
@@ -664,6 +664,7 @@ Not deleting $directory; name is suspiciously short.  Something is wrong."
 
     if "$DEVEL"; then
       if [ ! -d "$HOME/apache2" ]; then
+        run sudo a2enmod ssl
         run install/build_development_apache.sh 2.2 prefork
       fi
       cd devel

@@ -647,8 +647,17 @@ Not deleting $directory; name is suspiciously short.  Something is wrong."
     BK_DIR="$PWD"
     GRPC_DIR="$MOD_PAGESPEED_DIR/third_party/grpc/src"
     run cd "$GRPC_DIR"
-    status "apply patch for gettid"
-    run git apply ../gettid.patch
+    status "Check apply patch for gettid"
+    set -e
+    GIT_CHECK=0
+    git apply --check ../gettid.patch || GIT_CHECK=$?
+    status "value of GIT_CHECK is: $GIT_CHECK"
+    if [[ "$GIT_CHECK" == 1 ]]; then 
+        status "Patch are already Applied."
+    else 
+        status "Apply patch for gettid"
+        run git apply ../gettid.patch
+    fi
     cd "$BK_DIR"
 
     run pushd "$MOD_PAGESPEED_DIR"

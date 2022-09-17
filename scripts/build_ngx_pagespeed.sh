@@ -614,7 +614,7 @@ Not deleting $directory; name is suspiciously short.  Something is wrong."
     submodules_dir="$nps_module_dir/testing-dependencies"
     if "$DEVEL"; then
       status "Downloading dependencies..."
-      run git submodule update --init --recursive
+      run git submodule update --init --recursive --jobs=20
       if [[ "$CONTINUOUS_INTEGRATION" != true ]]; then
         status "Switching submodules over to git protocol."
         # This lets us push to github by public key.
@@ -641,7 +641,15 @@ Not deleting $directory; name is suspiciously short.  Something is wrong."
   PSOL_BINARY=""
   if "$PSOL_FROM_SOURCE"; then
     MOD_PAGESPEED_DIR="$PWD/testing-dependencies/mod_pagespeed"
-    git submodule update --init --recursive -- "$MOD_PAGESPEED_DIR"
+    status "run git submodule update --init --jobs=20 --recursive -- \"$MOD_PAGESPEED_DIR\""
+    run git submodule update --init --jobs=20 --recursive -- "$MOD_PAGESPEED_DIR"
+    status "current dir is: $PWD"
+    BK_DIR="$PWD"
+    GRPC_DIR="$MOD_PAGESPEED_DIR/third_party/grpc/src"
+    run cd "$GRPC_DIR"
+    status "apply patch for gettid"
+    run git apply ../gettid.patch
+
     run pushd "$MOD_PAGESPEED_DIR"
 
     if "$DEVEL"; then

@@ -649,6 +649,7 @@ Not deleting $directory; name is suspiciously short.  Something is wrong."
     run cd "$GRPC_DIR"
     status "apply patch for gettid"
     run git apply ../gettid.patch
+    cd "$BK_DIR"
 
     run pushd "$MOD_PAGESPEED_DIR"
 

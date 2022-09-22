@@ -37,4 +37,3 @@
 [submodule "testing-dependencies/ngx_brotli"]
 	path = testing-dependencies/ngx_brotli
 	url = https://github.com/google/ngx_brotli
-

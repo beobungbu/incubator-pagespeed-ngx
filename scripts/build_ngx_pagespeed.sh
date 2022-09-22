@@ -667,7 +667,7 @@ Not deleting $directory; name is suspiciously short.  Something is wrong."
       fi
       cd devel
       run sudo a2enmod ssl
-      sudo systemctl restart apache2
+      run sudo systemctl restart apache2
       run make apache_debug_psol
       PSOL_BINARY="$MOD_PAGESPEED_DIR/out/$BUILD_TYPE/pagespeed_automatic.a"
     else

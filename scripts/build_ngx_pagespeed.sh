@@ -495,7 +495,7 @@ add support for dynamic modules in a way compatible with ngx_pagespeed until
 
       run sudo apt-get update ${INSTALL_FLAGS}
       install_dependencies "apt-get install ${INSTALL_FLAGS}" debian_is_installed \
-        build-essential zlib1g-dev libpcre3 libpcre3-dev unzip wget uuid-dev python libxslt-dev libgd-dev libgeoip-dev
+        build-essential zlib1g-dev libpcre3 libpcre3-dev unzip wget uuid-dev python libxslt-dev libgd-dev libgeoip-dev libpam0g-dev libmaxminddb-dev
 
       if gcc_too_old; then
         if [ ! -e /usr/lib/gcc-mozilla/bin/gcc ]; then
@@ -721,6 +721,43 @@ Not deleting $directory; name is suspiciously short.  Something is wrong."
 
   if "$DEVEL"; then
     configure_args=("${configure_args[@]}"
+                    "--with-cc-opt='-g -O2 -fdebug-prefix-map=$submodules_dir/nginx=. -fstack-protector-strong -Wformat -fPIC -Wdate-time -D_FORTIFY_SOURCE=2'"
+                    "--with-ld-opt='-Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now -fPIC'"
+                    "--prefix=/usr/share/nginx"
+                    "--conf-path=/etc/nginx/nginx.conf"
+                    "--http-log-path=/var/log/nginx/access.log"
+                    "--error-log-path=/var/log/nginx/error.log"
+                    "--lock-path=/var/lock/nginx.lock"
+                    "--pid-path=/run/nginx.pid"
+                    "--modules-path=/usr/lib/nginx/modules"
+                    "--http-client-body-temp-path=/var/lib/nginx/body"
+                    "--http-fastcgi-temp-path=/var/lib/nginx/fastcgi"
+                    "--http-proxy-temp-path=/var/lib/nginx/proxy"
+                    "--http-scgi-temp-path=/var/lib/nginx/scgi"
+                    "--http-uwsgi-temp-path=/var/lib/nginx/uwsgi"
+                    "--with-debug"
+                    "--with-compat"
+                    "--with-pcre-jit"
+                    "--with-http_ssl_module"
+                    "--with-http_stub_status_module"
+                    "--with-http_realip_module"
+                    "--with-http_auth_request_module"
+                    "--with-http_v2_module"
+                    "--with-http_dav_module"
+                    "--with-http_slice_module"
+                    "--with-threads"
+                    "--with-http_addition_module"
+                    "--with-http_geoip_module=dynamic"
+                    "--with-http_gunzip_module"
+                    "--with-http_gzip_static_module"
+                    "--with-http_image_filter_module=dynamic"
+                    "--with-http_sub_module"
+                    "--with-http_xslt_module=dynamic"
+                    "--with-stream=dynamic"
+                    "--with-stream_ssl_module"
+                    "--with-stream_ssl_preread_module"
+                    "--with-mail=dynamic"
+                    "--with-mail_ssl_module"
                     "--add-module=$submodules_dir/ngx_cache_purge"
                     "--add-module=$submodules_dir/ngx_devel_kit"
                     "--add-module=$submodules_dir/set-misc-nginx-module"
@@ -816,6 +853,43 @@ Not deleting $directory; name is suspiciously short.  Something is wrong."
 
     if "$DEVEL"; then
       run make install
+
+      run sudo mkdir -p /var/lib/nginx/{body,fastcgi,proxy,uwsgi,scgi}
+      run sudo chown --recursive www-data:www-data /var/lib/nginx
+      run sudo systemctl stop apache2
+      run sudo tee -a /lib/systemd/system/nginx.service > /dev/null <<EOC
+      # Stop dance for nginx
+      # =======================
+      #
+      # ExecStop sends SIGSTOP (graceful stop) to the nginx process.
+      # If, after 5s (--retry QUIT/5) nginx is still running, systemd takes control
+      # and sends SIGTERM (fast shutdown) to the main process.
+      # After another 5s (TimeoutStopSec=5), and if nginx is alive, systemd sends
+      # SIGKILL to all the remaining processes in the process group (KillMode=mixed).
+      #
+      # nginx signals reference doc:
+      # http://nginx.org/en/docs/control.html
+      #
+      [Unit]
+      Description=A high performance web server and a reverse proxy server
+      Documentation=man:nginx(8)
+      After=network.target
+
+      [Service]
+      Type=forking
+      PIDFile=/run/nginx.pid
+      ExecStartPre=/usr/sbin/nginx -t -q -g 'daemon on; master_process on;'
+      ExecStart=/usr/sbin/nginx -g 'daemon on; master_process on;'
+      ExecReload=/usr/sbin/nginx -g 'daemon on; master_process on;' -s reload
+      ExecStop=-/sbin/start-stop-daemon --quiet --stop --retry QUIT/5 --pidfile /run/nginx.pid
+      TimeoutStopSec=5
+      KillMode=mixed
+
+      [Install]
+      WantedBy=multi-user.target
+      EOC
+      run sudo systemctl start nginx
+
 
       status "Nginx installed with ngx_pagespeed, and set up for development."
       echo "To run tests:"

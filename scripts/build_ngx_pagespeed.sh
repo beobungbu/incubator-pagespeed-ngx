@@ -608,7 +608,6 @@ Not deleting $directory; name is suspiciously short.  Something is wrong."
       run find ./ -iname .gitmodules -exec sed -i s,git://git.apache.org,https://github.com/apache,g {} \;
       run git submodule update --init --recursive --jobs=20
       run sudo apt-get update -y
-      run sudo a2enmod ssl
 
     fi
     submodules_dir="$nps_module_dir/testing-dependencies"
@@ -664,10 +663,11 @@ Not deleting $directory; name is suspiciously short.  Something is wrong."
 
     if "$DEVEL"; then
       if [ ! -d "$HOME/apache2" ]; then
-        run sudo a2enmod ssl
         run install/build_development_apache.sh 2.2 prefork
       fi
       cd devel
+      run sudo a2enmod ssl
+      sudo systemctl restart apache2
       run make apache_debug_psol
       PSOL_BINARY="$MOD_PAGESPEED_DIR/out/$BUILD_TYPE/pagespeed_automatic.a"
     else
@@ -848,4 +848,5 @@ Not deleting $directory; name is suspiciously short.  Something is wrong."
 
 # Start running things from a call at the end so if this script is executed
 # after a partial download it doesn't do anything.
+# export MAKEFLAGS=-j8
 build_ngx_pagespeed "$@"

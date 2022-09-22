@@ -720,13 +720,20 @@ Not deleting $directory; name is suspiciously short.  Something is wrong."
 
   if "$DEVEL"; then
     configure_args=("${configure_args[@]}"
-                    "--prefix=$install_dir/nginx"
                     "--add-module=$submodules_dir/ngx_cache_purge"
                     "--add-module=$submodules_dir/ngx_devel_kit"
                     "--add-module=$submodules_dir/set-misc-nginx-module"
                     "--add-module=$submodules_dir/headers-more-nginx-module"
+                    "--add-module=$submodules_dir/ngx_brotli"
                     "--with-ipv6"
-                    "--with-http_v2_module")
+                    "--with-http_v2_module"
+                    "--add-dynamic-module=$submodules_dir/ngx_http_auth_pam_module"
+                    "--add-dynamic-module=$submodules_dir/nginx-dav-ext-module"
+                    "--add-dynamic-module=$submodules_dir/echo-nginx-module"
+                    "--add-dynamic-module=$submodules_dir/nginx-upstream-fair"
+                    "--add-dynamic-module=$submodules_dir/ngx_http_substitutions_filter_module"
+                    "--add-dynamic-module=$submodules_dir/ngx_http_geoip2_module"
+                    )
     if [ "$BUILD_TYPE" = "Debug" ]; then
       configure_args=("${configure_args[@]}" "--with-debug")
     fi

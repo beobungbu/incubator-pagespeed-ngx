@@ -658,18 +658,6 @@ Not deleting $directory; name is suspiciously short.  Something is wrong."
         status "Apply patch for gettid"
         run git apply ../gettid.patch
     fi
-    cd "$TESTING_DEPENDENCIES_DIR/nginx-upstream-fair"
-    status "Check apply patch for nginx upstream fair"
-        set -e
-        GIT_CHECK=0
-        git apply --check ../nginx-upstream-fair-fix-default-port.patch || GIT_CHECK=$?
-        status "value of GIT_CHECK is: $GIT_CHECK"
-        if [[ "$GIT_CHECK" == 1 ]]; then
-            status "Patch are already Applied."
-        else
-            status "Apply patch for nginx-upstream-fair"
-            run git apply ../nginx-upstream-fair-fix-default-port.patch
-        fi
     cd "$BK_DIR"
 
     run pushd "$MOD_PAGESPEED_DIR"

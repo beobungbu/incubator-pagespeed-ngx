@@ -731,7 +731,6 @@ Not deleting $directory; name is suspiciously short.  Something is wrong."
                     "--add-dynamic-module=$submodules_dir/ngx_http_auth_pam_module"
                     "--add-dynamic-module=$submodules_dir/nginx-dav-ext-module"
                     "--add-dynamic-module=$submodules_dir/echo-nginx-module"
-                    "--add-dynamic-module=$submodules_dir/nginx-upstream-fair"
                     "--add-dynamic-module=$submodules_dir/ngx_http_substitutions_filter_module"
                     "--add-dynamic-module=$submodules_dir/ngx_http_geoip2_module"
                     )

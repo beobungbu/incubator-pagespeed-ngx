@@ -639,7 +639,8 @@ Not deleting $directory; name is suspiciously short.  Something is wrong."
   MOD_PAGESPEED_DIR=""
   PSOL_BINARY=""
   if "$PSOL_FROM_SOURCE"; then
-    MOD_PAGESPEED_DIR="$PWD/testing-dependencies/mod_pagespeed"
+    TESTING_DEPENDENCIES_DIR="$PWD/testing-dependencies"
+    MOD_PAGESPEED_DIR="$TESTING_DEPENDENCIES_DIR/mod_pagespeed"
     status "run git submodule update --init --jobs=20 --recursive -- \"$MOD_PAGESPEED_DIR\""
     run git submodule update --init --jobs=20 --recursive -- "$MOD_PAGESPEED_DIR"
     status "current dir is: $PWD"
@@ -657,6 +658,18 @@ Not deleting $directory; name is suspiciously short.  Something is wrong."
         status "Apply patch for gettid"
         run git apply ../gettid.patch
     fi
+    cd "$TESTING_DEPENDENCIES_DIR/nginx-upstream-fair"
+    status "Check apply patch for nginx upstream fair"
+        set -e
+        GIT_CHECK=0
+        git apply --check ../nginx-upstream-fair-fix-default-port.patch || GIT_CHECK=$?
+        status "value of GIT_CHECK is: $GIT_CHECK"
+        if [[ "$GIT_CHECK" == 1 ]]; then
+            status "Patch are already Applied."
+        else
+            status "Apply patch for nginx-upstream-fair"
+            run git apply ../nginx-upstream-fair-fix-default-port.patch
+        fi
     cd "$BK_DIR"
 
     run pushd "$MOD_PAGESPEED_DIR"

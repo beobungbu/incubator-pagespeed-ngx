@@ -721,8 +721,6 @@ Not deleting $directory; name is suspiciously short.  Something is wrong."
 
   if "$DEVEL"; then
     configure_args=("${configure_args[@]}"
-                    "--with-cc-opt=\"-g -O2 -fdebug-prefix-map=$submodules_dir/nginx=. -fstack-protector-strong -Wformat -fPIC -Wdate-time -D_FORTIFY_SOURCE=2\""
-                    "--with-ld-opt=\"-Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now -fPIC\""
                     "--prefix=/usr/share/nginx"
                     "--conf-path=/etc/nginx/nginx.conf"
                     "--http-log-path=/var/log/nginx/access.log"
@@ -824,6 +822,9 @@ Not deleting $directory; name is suspiciously short.  Something is wrong."
         echo "About to build nginx.  Do you have any additional ./configure"
         echo "arguments you would like to set?  For example, if you would like"
         echo "to build nginx with https support give --with-http_ssl_module"
+        status "please remember to add there to config"
+        status "--with-cc-opt=\'-g -O2 -fdebug-prefix-map=$submodules_dir/nginx=. -fstack-protector-strong -Wformat -fPIC -Wdate-time -D_FORTIFY_SOURCE=2\'"
+        status "--with-ld-opt=\'-Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now -fPIC\'"
         echo "If you don't have any, just press enter."
         read -p "> " additional_configure_args
       fi
